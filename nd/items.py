@@ -13,4 +13,17 @@ import scrapy
 class NdItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    symbol = scrapy.Field()
+    ipo_year = scrapy.Field()
+    name = scrapy.Field()
+    sector = scrapy.Field()
+    industry = scrapy.Field()
+    country = scrapy.Field()
+    board = scrapy.Field()
+    prof_margin = scrapy.Field()
+    ppe = scrapy.Field()
+    vol = scrapy.Field()
+    descShort = scrapy.Field()
+    url_marketwatch = scrapy.Field()
+    url_reuter = scrapy.Field()
     pass
