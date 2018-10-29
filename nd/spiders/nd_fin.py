@@ -5,6 +5,7 @@ import datetime
 from scrapy.http import Request
 from urllib import parse
 from nd.items import NdItem
+from nd.model import marketwatch_bs
 #from scrapy.loader import ItemLoader
 
 
@@ -52,6 +53,7 @@ class ndlistSpider(scrapy.Spider):
         NdItem_result = NdItem()
         url_reuter =  response.css("table.fullview-links .tab-link::attr(href)").extract()[0]
         url_marketwatch = response.css("table.fullview-links .tab-link::attr(href)").extract()[1]
+        NIGR_result = marketwatch_bs.get_NIGR_js(response.meta['item_symbol'])
 
         desc = response.css(".fullview-profile::text").extract_first()
         name = response.css(".fullview-title a.tab-link b::text").extract()[0]
@@ -76,5 +78,7 @@ class ndlistSpider(scrapy.Spider):
         NdItem_result["url_marketwatch"] = url_marketwatch
         NdItem_result["ipo_year"] = response.meta['ipo_year']
         NdItem_result["descShort"] = desc
+        NdItem_result["NIGR_result"] = NIGR_result
+
         yield NdItem_result  # pass to item
         pass

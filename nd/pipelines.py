@@ -21,12 +21,12 @@ class MysqlPipeline(object):
 
     def process_item(self, item, spider):
         insert_sql = """
-            insert into nd(symbol,name,sector, industry, country, board, prof_margin, ppe, vol, descShort,url_reuter, url_marketwatch,ipo_year)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s)
+            insert into nd(symbol,name,sector, industry, country, board, prof_margin, ppe, vol, descShort,url_reuter, url_marketwatch,ipo_year,NIGR_result)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s)
 
         """
         self.cursor.execute(insert_sql, (item['symbol'], item['name'],item['sector'],item['industry'],item['country'],
                                          item['board'], item['prof_margin'],item['ppe'], item['vol'],
-                                         item['descShort'], item['url_reuter'],item['url_marketwatch'],item['ipo_year']))
+                                         item['descShort'], item['url_reuter'],item['url_marketwatch'],item['ipo_year'],item['NIGR_result']))
         self.conn.commit()
         return item

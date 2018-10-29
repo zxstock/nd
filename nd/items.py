@@ -26,4 +26,5 @@ class NdItem(scrapy.Item):
     descShort = scrapy.Field()
     url_marketwatch = scrapy.Field()
     url_reuter = scrapy.Field()
+    NIGR_result = scrapy.Field()
     pass
