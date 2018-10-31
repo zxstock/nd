@@ -63,7 +63,7 @@ class ndlistSpider(scrapy.Spider):
         board = response.css(".fullview-title span.body-table::text").extract()[0]
         prof_margin= response.css(".snapshot-td2 span::text").extract()[14]
         ppe = response.css(".table-dark-row:nth-child(1) td:nth-child(4) b::text").extract_first()
-        vol = response.css(".snapshot-td2 b::text").extract()[-1]
+        vol = response.css(".snapshot-td2 b::text").extract()[4]
         #NdItem_result["url"] = response.meta['item_url']
         NdItem_result["symbol"] = response.meta['item_symbol']
         NdItem_result["name"] = name
