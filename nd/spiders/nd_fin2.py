@@ -12,7 +12,8 @@ from nd.model import marketwatch_bs
 
 from nd.model.csv_symbol import return_symbols
 
-symbol_list = return_symbols('nasdaq.csv')
+#symbol_list = return_symbols('nyse.csv')
+symbol_list = return_symbols('nasdaqNov2018.csv')
 
 # -*- coding: utf-8 -*-
 
@@ -32,13 +33,19 @@ class ndlistSpider(scrapy.Spider):
         # Extract information inside each page
         # using css to extract
 
-        df_nasdaq = pd.read_csv('nasdaq.csv')
+        #df_nasdaq = pd.read_csv('nasdaq.csv')
+        #df_nasdaq = pd.read_csv('nyse.csv')
+        df_nasdaq = pd.read_csv('nasdaqNov2018.csv')
+
+        df_nasdaq = df_nasdaq.fillna('0')
 
 
         #names = response.css(".data.quoteTable tbody tr td:nth-of-type(2)").extract()  #only return empty list
         for i in np.arange(len(symbol_list)):
             symbol = symbol_list[i]
-            IPO_year = df_nasdaq.loc[df_nasdaq['Symbol'] == symbol].get('IPOyear').item()
+            IPO_year = df_nasdaq.loc[df_nasdaq['Symbol'] == symbol].get('IPOyear').item() #maybe n/a due to raw download data
+            if IPO_year is None:
+                IPO_year = '0'
             url = 'https://finviz.com/quote.ashx?t='+symbol.lower()
             yield scrapy.Request(url,
                                  meta={'item_symbol': symbol,'ipo_year':IPO_year,'url': url},
@@ -63,7 +70,19 @@ class ndlistSpider(scrapy.Spider):
         NIGR_result = marketwatch_bs.get_NIGR_js(response.meta['item_symbol'])
 
         desc = response.css(".fullview-profile::text").extract_first()
-        name = response.css(".fullview-title a.tab-link b::text").extract()[0]
+
+
+        #name = response.css(".fullview-title a.tab-link b::text").extract()[0]  none [0] return error or use extract_first()
+        #if name is None:
+        #    name = response.css(".fullview-title tr td::text").extract()[1]
+
+        if response.css(".fullview-title a.tab-link b::text").extract() is None:
+            name = response.css(".fullview-title tr td::text").extract()[1]
+        else:
+            name = response.css(".fullview-title a.tab-link b::text").extract_first()  #with hyperlink and bold
+
+        #https://finviz.com/quote.ashx?t=pff no link
+
         sector = response.css(".fullview-title .tab-link::text").extract()[0]
         industry = response.css(".fullview-title .tab-link::text").extract()[1]
         country = response.css(".fullview-title .tab-link::text").extract()[2]
@@ -89,6 +108,20 @@ class ndlistSpider(scrapy.Spider):
         ROI = checkspan(".table-dark-row:nth-child(7) td:nth-child(8) b::text").extract_first()
         dividYieldAnn = checkspan(".table-dark-row:nth-child(8) td:nth-child(2) b::text").extract_first()
         dividPayoutRatio = checkspan(".table-dark-row:nth-child(11) td:nth-child(8) b::text").extract_first()
+
+        relVolumn = checkspan(".table-dark-row:nth-child(10) td:nth-child(10) b::text").extract_first()
+        #add once
+        PEG = checkspan(".table-dark-row:nth-child(3) td:nth-child(4) b::text").extract_first()
+        PSR = checkspan(".table-dark-row:nth-child(4) td:nth-child(4) b::text").extract_first()
+        fiftytwoWeekRange = checkspan(".table-dark-row:nth-child(6) td:nth-child(10) b small::text").extract_first()
+
+        #add more
+        PBR = checkspan(".table-dark-row:nth-child(5) td:nth-child(4) b::text").extract_first()
+        PFCF = checkspan(".table-dark-row:nth-child(7) td:nth-child(4) b::text").extract_first()
+        DEBTtoEquity = checkspan(".table-dark-row:nth-child(10) td:nth-child(4) b::text").extract_first()
+        Beta = checkspan(".table-dark-row:nth-child(7) td:nth-child(12) b::text").extract_first()
+        Volatility = checkspan(".table-dark-row:nth-child(9) td:nth-child(12) b small::text").extract_first()
+
         avgVolumn3Month = checkspan(".table-dark-row:nth-child(11) td:nth-child(10) b::text").extract_first()
         priceNow = checkspan(".table-dark-row:nth-child(11) td:nth-child(12) b::text").extract_first()
         recomm = checkspan(".table-dark-row:nth-child(12) td:nth-child(2) b::text").extract_first()
@@ -135,6 +168,21 @@ class ndlistSpider(scrapy.Spider):
         NdItem_result["ipo_year"] = response.meta['ipo_year']
         NdItem_result["descShort"] = desc
         NdItem_result["NIGR_result"] = NIGR_result
+        NdItem_result["relVolumn"] = relVolumn
+
+        NdItem_result["PEG"] = PEG
+        NdItem_result["PSR"] = PSR
+        NdItem_result["fiftytwoWeekRange"] = fiftytwoWeekRange
+
+        NdItem_result["PBR"] = PBR
+        NdItem_result["PFCF"] = PFCF
+        NdItem_result["DEBTtoEquity"] = DEBTtoEquity
+        NdItem_result["Beta"] = Beta
+        NdItem_result["Volatility"] = Volatility
+
+
+
+
 
 
 

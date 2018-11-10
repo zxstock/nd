@@ -51,6 +51,17 @@ class NdItem(scrapy.Item):
     SMA20 = scrapy.Field()
     SMA50 = scrapy.Field()
     SMA200 = scrapy.Field()
+    relVolumn = scrapy.Field()
+
+    PEG = scrapy.Field()
+    PSR = scrapy.Field()
+    fiftytwoWeekRange = scrapy.Field()
+
+    PBR = scrapy.Field()
+    PFCF = scrapy.Field()
+    DEBTtoEquity = scrapy.Field()
+    Beta = scrapy.Field()
+    Volatility = scrapy.Field()
 
     pass
 

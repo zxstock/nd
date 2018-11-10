@@ -11,7 +11,9 @@ conn = mysql.connector.connect(user='root', password='gmw6504192658',
                                             use_unicode=True)
 cursor = conn.cursor()  # Database operation
 
-df_allndlist= pd.read_sql('SELECT * FROM nd2', con=conn)
+df_allndlist= pd.read_sql('SELECT * FROM ndall', con=conn)
+
+#df_allndlist= pd.read_sql('SELECT * FROM nyse', con=conn)
 
 def CustomParser(data):
     j1 = json.loads(data)
@@ -77,7 +79,15 @@ df_allndlist['recomm'] =df_allndlist['recomm'].apply(str2float)
 df_allndlist.rename(columns={'recomm':'recomm1buy5sell'}, inplace=True)
 
 
-df_allndlist['ipo_year'] = df_allndlist['ipo_year'].apply(lambda x: int(x[:-2]))
+df_allndlist['relVolumn'] =df_allndlist['relVolumn'].apply(str2float)  #for NYSE stock, not for ND for now@11.7.2018
+df_allndlist['PEG'] =df_allndlist['PEG'].apply(str2float)
+df_allndlist['PSR'] =df_allndlist['PSR'].apply(str2float)
+df_allndlist['PBR'] =df_allndlist['PBR'].apply(str2float)
+df_allndlist['PFCF'] =df_allndlist['PFCF'].apply(str2float)
+df_allndlist['DEBTtoEquity'] =df_allndlist['DEBTtoEquity'].apply(str2float)
+df_allndlist['Beta'] =df_allndlist['Beta'].apply(str2float)
+
+df_allndlist['ipo_year'] = df_allndlist['ipo_year'].apply(lambda x: int(x[:-2] if (len(x) == 6) else 0))
 
 
 
@@ -121,4 +131,5 @@ df_allndlist.rename(columns={'2015-2014':'2015to2014'}, inplace=True)
 df_allndlist.rename(columns={'2016-2015':'2016to2015'}, inplace=True)
 df_allndlist.rename(columns={'2017-2016':'2017to2016'}, inplace=True)
 
-df_allndlist.to_csv('list_nd2_all.csv',encoding='utf-8',index=False)
+#df_allndlist.to_csv('list_ndall.csv',encoding='utf-8',index=False)
+df_allndlist.to_csv('list_ndall_3051.csv',encoding='utf-8',index=False)
